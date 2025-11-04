@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>萌兔CP的恋爱</title>
+<style>
+  :root {
+    --bg-color: #88afcb;
+    --header-bg: #d0e6f7;
+    --card-bg: #b7d6eb;
+    --text-color: #333;
+    --title-color: #3d6885;
+  }
+
+  body.night {
+    --bg-color: #1e2a38;
+    --header-bg: #32465a;
+    --card-bg: #415b70;
+    --text-color: #333;
+    --title-color: #dfeaff;
+  }
+
+  body {
+    font-family: "楷书", sans-serif;
+    background: linear-gradient(180deg, var(--bg-color), #a7c3da);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    transition: background 1s ease, color 0.6s ease;
+    overflow-x: hidden;
+  }
+
+  header {
+    background-color: var(--header-bg);
+    color: var(--title-color);
+    padding: 30px 0;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(255,255,255,0.85);
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  .theme-toggle:hover {
+    transform: rotate(25deg) scale(1.1);
+    background: rgba(255,255,255,1);
+  }
+
+  .title {
+    margin-top: 10px;
+    font-size: 1.2em;
+  }
+
+  .partner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 30px;
+    gap: 40px;
+  }
+
+  .profile {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    width: 300px;
+    padding: 30px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .profile:hover {
+    transform: translateY(-5px);
+  }
+
+  .profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .profile h3 {
+    margin-top: 10px;
+    color: var(--title-color);
+  }
+
+  .section {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: var(--header-bg);
+    padding: 20px;
+    border-radius: 10px;
+    line-height: 1.6;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+
+  h2 {
+    text-align: center;
+    color: var(--title-color);
+  }
+
+  .love-progress {
+    width: 90%;
+    height: 20px;
+    margin: 10px auto;
+    background: rgba(255,255,255,0.6);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .love-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff91a4, #ffb6c1);
+    width: 0%;
+    border-radius: 20px;
+    transition: width 2s ease;
+  }
+
+  .love-note {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: rgba(255,255,255,0.9);
+    padding: 12px 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    opacity: 0;
+    animation: popUp 2s ease forwards;
+    z-index: 9999;
+  }
+
+  @keyframes popUp {
+    0% {opacity: 0; transform: translate(-50%, 20px) scale(0.9);}
+    20% {opacity: 1; transform: translate(-50%, 0) scale(1);}
+    80% {opacity: 1;}
+    100% {opacity: 0; transform: translate(-50%, -30px) scale(0.9);}
+  }
+
+  /* 星空闪烁 */
+  .star {
+    position: fixed;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.8;
+    animation: twinkle 2s infinite ease-in-out;
+    z-index: 0;
+  }
+
+  @keyframes twinkle {
+    0%,100% {opacity: 0.3;}
+    50% {opacity: 1;}
+  }
+
+  /* 飘落爱心 */
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  .heart {
+    position: fixed;
+    top: -10px;
+    font-size: 20px;
+    animation: fall 3s linear forwards;
+  }
+
+  .heart-btn, .quote-btn {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 18px;
+    background: #ff9db5;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s ease;
+  }
+
+  .heart-btn:hover, .quote-btn:hover {
+    background: #ff7d9a;
+  }
+
+  /* 背景音乐控制 */
+  .music-control {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+  }
+  .music-control:hover { transform: scale(1.1); }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div>萌兔CP的恋爱</div>
+  <div class="title">萌妃 & 兔丸</div>
+  <button class="theme-toggle" title="切换主题">🌙</button>
+</header>
+
+<div class="partner">
+  <div class="profile">
+    <img src="/Users/yukino/Downloads/Screenshot 2025-11-03 at 23.12.40.png" alt="萌妃" />
+    <h3>萌妃</h3>
+    <p>裤衩超人妃</p>
+  </div>
+  <div class="profile">
+    <img src="/Users/yukino/Downloads/Screenshot 2025-11-03 at 23.09.27.png" alt="兔丸"/>
+    <h3>兔丸</h3>
+    <p>精神兔丸</p>
+  </div>
+</div>
+
+<div class="section">
+  <h2>恋爱成长记录 💗</h2>
+  <p id="loveDays"></p>
+  <div class="love-progress"><div class="love-bar"></div></div>
+</div>
+
+<div class="section" style="text-align:center;">
+  <h2>心动留言 💬</h2>
+  <button class="heart-btn">💖 写下甜言蜜语</button>
+  <button class="quote-btn">✨ 随机表白语</button>
+</div>
+
+<div class="section">
+  <h2>恋爱经过</h2>
+  <p><strong>相遇：</strong> 在风和日丽的一天，萌妃在校园的小道上与兔丸相遇，自此开始了长达一坤年的骚扰。</p>
+  <p><strong>相识：</strong> 聊天时，萌妃呆傻的气质和风格让兔丸觉得独特。</p>
+  <p><strong>相知：</strong> 班里只剩下彼此，命运，到底应该何去何从？这让兔丸时常陷入沉思。</p>
+  <p><strong>恋爱：</strong> 虽经历很多挫折，最终还是遵从了本心，无论如何，我想双方都不会后悔此刻的决定。</p>
+</div>
+
+<div class="section" style="text-align:center;">
+  <h2>她们的故事还在继续……</h2>
+  <p>愿萌妃和兔丸的爱情永远幸福甜蜜！</p>
+</div>
+
+<div class="music-control" title="播放/暂停音乐">🎵</div>
+
+<audio id="bgm" src="/Users/yukino/Downloads/老婆最大剪辑.MP3" autoplay loop></audio>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleBtn = document.querySelector(".theme-toggle");
+  const body = document.body;
+  const musicBtn = document.querySelector(".music-control");
+  const bgm = document.getElementById("bgm");
+
+  // 播放控制
+  let playing = false;
+  musicBtn.addEventListener("click", () => {
+    if (!playing) { bgm.play(); playing = true; musicBtn.textContent = "⏸️"; }
+    else { bgm.pause(); playing = false; musicBtn.textContent = "🎵"; }
+  });
+
+  // 相恋天数
+  const startDate = new Date("2024-08-10");
+  const today = new Date();
+  const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+  document.getElementById("loveDays").textContent = `她们已经相恋 ${days} 天啦～ ❤️`;
+  document.querySelector(".love-bar").style.width = Math.min(days, 365) / 3.65 + "%";
+
+  // 欢迎提示
+  setTimeout(() => alert("欢迎来到萌兔CP的甜蜜小窝~ 💕"), 600);
+
+  // === 甜蜜语录 ===
+  const quotes = {
+    "萌妃": [
+      "最近看了一本书，爱上你我愿赌服输 📚",
+      "跟你玩石头剪刀布，我只能出剪刀，因为你就是我的拳布 🪨✂️📄",
+      "这是我的手背，这是我的脚背，你是我的宝贝 ❤️"
+    ],
+    "兔丸": [
+      "今天吃了一个桃，爱你我在劫难逃 🍑",
+      "我最近老犯困，你肯定要说我熬夜了，其实我没有，我只是为你所困",
+      "世界上有三种尺，直尺，三角尺，还有I love you very much 💕"
+    ]
+  };
+
+  document.querySelectorAll(".profile").forEach(profile => {
+    profile.addEventListener("click", () => {
+      const name = profile.querySelector("h3").textContent.trim();
+      const list = quotes[name];
+      if (list) {
+        const msg = list[Math.floor(Math.random() * list.length)];
+        showPopup(msg);
+      }
+    });
+  });
+
+  function showPopup(text) {
+    const box = document.createElement("div");
+    Object.assign(box.style, {
+      position: "fixed",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%) scale(0.9)",
+      background: "white",
+      padding: "20px 25px",
+      borderRadius: "12px",
+      boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+      opacity: "0",
+      transition: "all 0.3s ease",
+      zIndex: 10000
+    });
+    box.textContent = text;
+    document.body.appendChild(box);
+    requestAnimationFrame(() => {
+      box.style.opacity = "1";
+      box.style.transform = "translate(-50%, -50%) scale(1)";
+    });
+    setTimeout(() => {
+      box.style.opacity = "0";
+      box.style.transform = "translate(-50%, -50%) scale(0.9)";
+      setTimeout(() => box.remove(), 300);
+    }, 2200);
+  }
+
+  // 悬停头像放大
+  document.querySelectorAll(".profile img").forEach(img => {
+    img.addEventListener("mouseenter", () => img.style.transform = "scale(1.1)");
+    img.addEventListener("mouseleave", () => img.style.transform = "scale(1)");
+  });
+
+  // 飘落爱心动画
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = ["💖","💕","💞","💘"][Math.floor(Math.random()*4)];
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.fontSize = 14 + Math.random()*16 + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 3000);
+  }
+  setInterval(createHeart, 600);
+
+  // 夜间模式 + 星空
+  toggleBtn.addEventListener("click", () => {
+    const isNight = body.classList.toggle("night");
+    toggleBtn.textContent = isNight ? "🌞" : "🌙";
+    if (isNight) createStars();
+    else document.querySelectorAll(".star").forEach(s => s.remove());
+  });
+
+  function createStars() {
+    for (let i=0; i<40; i++){
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.width = s.style.height = Math.random()*3+"px";
+      s.style.left = Math.random()*100+"vw";
+      s.style.top = Math.random()*100+"vh";
+      s.style.animationDuration = (2+Math.random()*3)+"s";
+      document.body.appendChild(s);
+    }
+  }
+
+  // 心动留言 + 随机表白
+  const loveNotes = [
+    "知道我和唐僧什么区别吗？唐僧取经，我娶你 💕",
+    "我是玲儿，你是叮当，因为铃儿想叮当 ✨",
+    "时间有两种，与你在一起的时间和与你分开的时间 🌏",
+    "你知道我为什么不涂腮红吗，因为看到你就忍不住脸红了 🌸"
+  ];
+  document.querySelector(".heart-btn").onclick = () => {
+    const msg = prompt("写一句祝福她们的话吧 💌");
+    if (msg) showNote(msg);
+  };
+  document.querySelector(".quote-btn").onclick = () => {
+    showNote(loveNotes[Math.floor(Math.random()*loveNotes.length)]);
+  };
+  function showNote(text){
+    const div = document.createElement("div");
+    div.className = "love-note";
+    div.textContent = text;
+    document.body.appendChild(div);
+    setTimeout(()=>div.remove(), 2000);
+  }
+});
+</script>
+</body>
+</html>
+
+
+
+
+
